@@ -12,28 +12,34 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('auth/register', [RegisterController::class, 'index'])->name('register');
-Route::post('auth/register', [RegisterController::class, 'store'])->name('register.store');
+Route::prefix('auth')->group(function() {
+    Route::get('/register', [RegisterController::class, 'index'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 
-Route::get('auth/login', [LoginController::class, 'index'])->name('login');
-Route::post('auth/login', [LoginController::class, 'store'])->name('login.store');
+    Route::get('/login', [LoginController::class, 'index'])->name('login');
+    Route::post('/login', [LoginController::class, 'store'])->name('login.store');
 
-Route::post('auth/logout', [LogoutController::class, 'store'])->name('logout.store');
+    Route::post('/logout', [LogoutController::class, 'store'])->name('logout.store');
+});
 
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
+Route::middleware('auth')->prefix('email')->group(function() {
+    Route::get('/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        $request->fulfill();
+        return redirect()->route('dashboard')->with('success', '!Tu cuenta ha sido verificada con éxito! Ya puedes administrar tus presupuestos y gastos.');
+    })->middleware('signed')->name('verification.verify');
 
-    return redirect()->route('dashboard')->with('success', '!Tu cuenta ha sido verificada con éxito! Ya puedes administrar tus presupuestos y gastos.');
-})->middleware(['auth', 'signed'])->name('verification.verify');
+    Route::get('/verify', function () {
+        return view('auth.verify-email');
+    })->name('verification.notice');
 
-Route::get('/email/verify', function () {
-    return view('auth.verify-email');
-})->middleware('auth')->name('verification.notice');
+    Route::post('/verification-notification', function (Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('success', '¡Se ha reenviado un nuevo enlace de verificación a tu correo electrónico!');
+    })->middleware('throttle:1,1')->name('verification.send');
+});
 
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-
-    return back()->with('success', '¡Se ha reenviado un nuevo enlace de verificación a tu correo electrónico!');
-})->middleware('auth', 'throttle:1,1')->name('verification.send');
-
-Route::get('/dashboard', [BudgetController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::prefix('dashboard')->group(function () {
+    Route::get('/', [BudgetController::class, 'index'])->name('dashboard');
+    Route::get('/budgets/create', [BudgetController::class, 'create'])->name('budgets.create');
+    Route::post('/budgets', [BudgetController::class, 'store'])->name('budgets.store');
+});
