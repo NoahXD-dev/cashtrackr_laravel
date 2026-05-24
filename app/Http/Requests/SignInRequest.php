@@ -19,7 +19,7 @@ class SignInRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.exists' => 'No se encontró una cuenta con ese :attribute.',
+            'email.exists' => 'No se encontró una cuenta con ese email.',
         ];
     }
 
