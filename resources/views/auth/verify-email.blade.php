@@ -10,6 +10,7 @@
     @endif
 
     <form method="POST" action="{{ route('verification.send') }}">
+        @csrf
         <input 
             type="submit" 
             value='Reenviar Correo de Verificación'
