@@ -20,12 +20,12 @@ class SignupRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'El :attribute es obligatorio',
-            'email.required' => 'El :attribute es obligatorio',
-            'email.email' => 'El :attribute debe ser una dirección de correo electrónico válida',
-            'email.unique' => 'El :attribute ya está registrado',
-            'password.required' => 'El :attribute es obligatorio',
-            'password.confirmed' => 'Las :attributes no coinciden',
+            'name.required' => 'El nombre es obligatorio',
+            'email.required' => 'El email es obligatorio',
+            'email.email' => 'El email debe ser una dirección de correo electrónico válida',
+            'email.unique' => 'El email ya está registrado',
+            'password.required' => 'La contraseña es obligatoria',
+            'password.confirmed' => 'Las contraseñas no coinciden',
             'password.min' => 'La :attribute debe tener al menos :min caracteres',
             'password.letters' => 'La :attribute debe contener al menos 1 letra',
             'password.mixed' => 'La :attribute debe contener al menos 1 letra mayúscula y 1 letra minúscula',

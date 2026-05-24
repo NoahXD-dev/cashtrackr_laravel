@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Registrarse')
+@section('title', 'Crear Cuenta')
 
 @section('auth-content')
     <form method="POST" action="{{ route('register.store') }}" class="mt-14 space-y-5" novalidate auto-complete="off">
