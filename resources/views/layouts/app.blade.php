@@ -1,6 +1,6 @@
 @extends('layouts.base')
 
-@section('content')
+@section('contents')
     <div class="max-w-5xl mx-auto p-5 lg:p-10">
         @yield('actions')
     </div>
