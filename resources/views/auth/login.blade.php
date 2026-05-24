@@ -8,7 +8,7 @@
         <x-alert type="error" :message="session('error')" />
     @endif
 
-    <form method="POST" class="mt-14 space-y-5" novalidate autocomplete="off" action="{{ route('login.store') }}">
+    <form method="POST" class="mt-14 space-y-5" novalidate action="{{ route('login.store') }}">
         @csrf
         <div class="flex flex-col gap-2">
             <label class="font-bold text-2xl" for="email">Email</label>

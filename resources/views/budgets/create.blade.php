@@ -16,7 +16,7 @@
 @endsection
 
 @section('dashboard-contents')
-    <form  class="mt-14 space-y-3 max-w-2xl mx-auto" novalidate autoComplete="off" method="POST" action="{{ route('budgets.store') }}">
+    <form  class="mt-14 space-y-3 max-w-2xl mx-auto" novalidate  method="POST" action="{{ route('budgets.store') }}">
         @csrf
         
         <x-budget-form />

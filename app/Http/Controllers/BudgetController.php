@@ -78,6 +78,8 @@ class BudgetController extends Controller
     #[Authorize('delete', 'budget')]
     public function destroy(Budget $budget)
     {
-        //
+        $budget->delete();
+
+        return redirect()->route('dashboard')->with('success', '!Presupuesto eliminado correctamente!');
     }
 }
