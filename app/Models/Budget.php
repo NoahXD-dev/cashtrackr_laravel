@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\BudgetType;
 use Illuminate\Database\Eloquent\Model;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -17,5 +18,15 @@ class Budget extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function isGeneral(): bool
+    {
+        return $this->type === BudgetType::General->value;
+    }
+
+    public function isGoal(): bool
+    {
+        return $this->type === BudgetType::Goal->value;
     }
 }
