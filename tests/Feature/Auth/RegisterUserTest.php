@@ -39,8 +39,8 @@ it('register a new user as unverified and dispatches the registered event', func
     $response = $this->post( route('register.store'), [
         'name' => 'Test User',
         'email' => 'test@example.com',
-        'password' => 'Pass1234.',
-        'password_confirmation' => 'Pass1234.'
+        'password' => 'SecureP@ssw0rd2026!',
+        'password_confirmation' => 'SecureP@ssw0rd2026!'
     ]);
 
     $response->assertRedirect( route('verification.notice') );
@@ -83,11 +83,11 @@ it('prevents duplicate email addresses', function () {
         'email' => 'test@example.com'
     ]);
 
-    $response = $this->post(route('register.store'), [
+    $response = $this->post( route('register.store'), [
         'name' => 'Test User',
         'email' => 'test@example.com',
-        'password' => 'Pass1234.',
-        'password_confirmation' => 'Pass1234.'
+        'password' => 'SecureP@ssw0rd2026!',
+        'password_confirmation' => 'SecureP@ssw0rd2026!'
     ]);
 
     $response->assertRedirect();
@@ -104,8 +104,8 @@ it('sends the verification email notification after registration', function() {
     $response = $this->post( route('register.store'), [
         'name' => 'Test User',
         'email' => 'test@example.com',
-        'password' => 'Pass1234.',
-        'password_confirmation' => 'Pass1234.'
+        'password' => 'SecureP@ssw0rd2026!',
+        'password_confirmation' => 'SecureP@ssw0rd2026!'
     ]);
 
     $user = User::where('email', 'test@example.com')->first();
