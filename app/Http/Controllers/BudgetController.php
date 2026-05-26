@@ -48,7 +48,9 @@ class BudgetController extends Controller
      */
     public function show(Budget $budget)
     {
-        return Inertia::render('Budgets/Show');
+        return Inertia::render('Budgets/Show', [
+            'budget'=> $budget
+        ]);
     }
 
     /**
