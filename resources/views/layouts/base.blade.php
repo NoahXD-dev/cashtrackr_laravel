@@ -6,7 +6,7 @@
 
         <title>{{ config('app.name', 'CashTrackr') }} - @yield('title')</title>
 
-        @fonts
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <!-- Styles / Scripts -->
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
