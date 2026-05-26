@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Authorize;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 #[Middleware('auth')]
 #[Middleware('verified')]
@@ -47,7 +48,7 @@ class BudgetController extends Controller
      */
     public function show(Budget $budget)
     {
-        dd("Hola");
+        return Inertia::render('Budgets/Show');
     }
 
     /**
