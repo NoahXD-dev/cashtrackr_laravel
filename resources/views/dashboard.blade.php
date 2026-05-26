@@ -40,7 +40,7 @@
                                         <p class=" absolute top-0 left-0 inline-block px-3 py-1 rounded-br-2xl text-sm font-medium w-40 text-white {{ $budget->isGeneral() ? 'bg-purple-900' : 'bg-amber-500' }}">
                                             {{ $budget->isGeneral() ? 'General' : 'Proyecto' }}
                                         </p>
-                                        <a class="text-2xl font-bold text-gray-500 block" href=""
+                                        <a class="text-2xl font-bold text-gray-500 block" href="{{ route('budgets.show', $budget) }}"
                                         >
                                             {{ $budget->name }}
                                         </a>
