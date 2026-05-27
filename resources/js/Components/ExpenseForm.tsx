@@ -1,13 +1,29 @@
+import { useForm } from "@inertiajs/react"
 import { useExpenseModalStore } from "@/stores/expense-modal-store"
+import Ziggy from '@/ziggy'
+import { route } from 'ziggy-js'
 
 export default function ExpenseForm() {
     const budget = useExpenseModalStore(state => state.budget)
     const categories = useExpenseModalStore(state => state.categories)
+
+    const { data, setData, post } = useForm({
+        name: '',
+        amout: '',
+        category: ''
+    })
+
     if(!budget) return null
+
+    const submit = (e: React.SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        post(route('expenses.store', budget.id))
+    }
 
     return (
          <div className='p-10 flex justify-center'>
-            <form className='flex flex-col space-y-3 w-full'>
+            <form onSubmit={ submit } className='flex flex-col space-y-3 w-full'>
                 <div className='space-y-3'>
                 <label htmlFor="name" className='block text-xl font-bold'>Nombre Gasto</label>
                 <input
@@ -15,6 +31,8 @@ export default function ExpenseForm() {
                     type="text"
                     placeholder="Nombre del gasto"
                     className="w-full border border-gray-300 p-3 rounded-lg"
+                    value={ data.name }
+                    onChange={ e => setData('name', e.target.value) }
                 />
                 </div>
 
@@ -25,6 +43,8 @@ export default function ExpenseForm() {
                     type="number"
                     placeholder="Cantidad"
                     className="w-full border border-gray-300 p-3 rounded-lg"
+                    value={ data.amout }
+                    onChange={ e => setData('amout', e.target.value) }
                 />
                 </div>
 
@@ -35,9 +55,11 @@ export default function ExpenseForm() {
                             name="category" 
                             id="category" 
                             className='w-full border border-gray-300 p-3 rounded-lg'
+                            value={ data.category }
+                            onChange={ e => setData('category', e.target.value) }
                         >
                             <option value="">Selecciona Categoría</option>
-                            {categories.map(category => <option value={category.value}>{category.label}</option>)}
+                            {categories.map(category => <option value={ category.value }>{ category.label }</option>)}
                         </select>
                     </div>
                 )}
