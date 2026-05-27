@@ -2,12 +2,19 @@ import { Head } from "@inertiajs/react"
 import { Budget } from "@/types/budget"
 import AmountDisplay from "@/Components/AmountDisplay"
 import ExpenseModal from "@/Components/ExpenseModal"
+import { useExpenseModalStore } from "@/stores/expense-modal-store"
+import { Category } from "@/types/category"
 
 type Props = {
     budget: Budget
+    categories: Category[]
 }
 
-export default function Show({ budget }: Props) {
+export default function Show({ budget, categories }: Props) {
+
+    const openCreateModal = useExpenseModalStore((state => state.openCreateModal))
+    useExpenseModalStore.getState().setBudget(budget)
+    useExpenseModalStore.getState().setCategories(categories)
 
     return (
         <>
@@ -38,7 +45,7 @@ export default function Show({ budget }: Props) {
                 <div className="flex items-center justify-between">
                     <h2 className="text-3xl font-bold">Gastos</h2>
 
-                    <button className="bg-purple-950 hover:bg-purple-800 px-5 py-2 my-5 rounded-lg text-white font-bold text-xl cursor-pointer">
+                    <button className="bg-purple-950 hover:bg-purple-800 px-5 py-2 my-5 rounded-lg text-white font-bold text-xl cursor-pointer" onClick={openCreateModal}>
                         Nuevo gasto
                     </button>
                 </div>
