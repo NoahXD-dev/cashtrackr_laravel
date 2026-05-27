@@ -1,5 +1,6 @@
 import { Head } from "@inertiajs/react"
 import { Budget } from "@/types/budget"
+import AmountDisplay from "@/Components/AmountDisplay"
 
 type Props = {
     budget: Budget
@@ -26,7 +27,9 @@ export default function Show({ budget }: Props) {
             <main className='grid grid-cols-1 md:grid-cols-2 items-center gap-20 mt-10'>
 
                 <div className='space-y-5'>
-
+                    <AmountDisplay label="Presupuesto" amout={+budget.amount} />
+                    <AmountDisplay label="Gastado" amout={0} />
+                    <AmountDisplay label="Restante" amout={0} />
                 </div>  
             </main>
         </>
