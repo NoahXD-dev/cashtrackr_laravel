@@ -6,6 +6,7 @@ import ExpenseModal from "@/Components/ExpenseModal"
 import { useExpenseModalStore } from "@/stores/expense-modal-store"
 import { Category } from "@/types/category"
 import { useEffect } from "react"
+import { formatDate } from "@/utils/main"
 
 type Props = {
     budget: Budget
@@ -58,6 +59,54 @@ export default function Show({ budget, categories }: Props) {
                         Nuevo gasto
                     </button>
                 </div>
+
+                { budget.expenses.length ? (
+                    <div className="mt-8 flow-root ">
+                        <div className=" ring-1 ring-gray-300 rounded-lg ">
+                            <div className="inline-block min-w-full align-middle">
+                                <table className="relative min-w-full">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">
+                                                <span className="sr-only">Gastos</span>
+                                            </th>
+                                            <th scope="col">
+                                                <span className="sr-only">Acciones</span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-300 ">
+                                        { budget.expenses.map(expense => (
+                                            <tr key={ expense.id } className='flex justify-between items-center '>
+                                                <td className={`${budget.type === 'general' ? 'pt-10' : 'pt-5'} pb-5 px-10 relative`}>
+                                                    { budget.type == 'general' && (
+                                                        <p className={`absolute top-0 left-0 inline-block px-3 py-1 rounded-br-2xl text-sm font-medium w-40 ${ expense.category_color }`}>
+                                                            { expense.category_label }
+                                                        </p>
+                                                    ) }
+                                                    <p className="text-xl font-bold text-gray-500">{ expense.name }</p>
+                                                    <p className="text-lg text-gray-500">${ expense.amount }</p>
+                                                    <p className='text-sm text-gray-400'>Agregado el: { formatDate(expense.created_at) }</p>
+                                                </td>
+                                                <td className="py-6 px-10 flex justify-end gap-3">
+                                                    
+                                                </td>
+                                            </tr>
+                                        )) }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <p className="text-center text-xl mt-10 ">No Hay Gastos.
+                        <button
+                            type='button'
+                            onClick={openCreateModal}
+                            className="text-amber-500"
+                        >Comienza creando uno</button>
+                    </p>
+                ) }
             </section>
 
             <ExpenseModal />
