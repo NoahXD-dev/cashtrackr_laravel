@@ -3,10 +3,11 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 
 type Props = {
-    budgetId: number
+    budgetId: number,
+    name: string
 }
 
-export default function CashTrackrAgent({ budgetId }: Props) {
+export default function CashTrackrAgent({ budgetId, name }: Props) {
 
     const [input, setInput] = useState('');
     const { sendMessage, messages } = useChat({
@@ -14,8 +15,6 @@ export default function CashTrackrAgent({ budgetId }: Props) {
             api: `/dashboard/budgets/${ budgetId }/chat`
         })
     })
-
-    console.log(messages)
 
     const eventSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -28,7 +27,24 @@ export default function CashTrackrAgent({ budgetId }: Props) {
     return (
         <section className='p-10 lg:px-5 shadow-lg mt-10'>
             <h2 className="text-3xl font-bold">Pregunta sobre tu Presupuesto, añade gastos y más.</h2>
-            <div className="space-y-3 mb-4 mt-8"></div>
+            <div className="space-y-3 mb-4 mt-8">
+                { messages.map(m => (
+                    <div className={`p-3 rounded-lg max-w-[80%] lg:max-w-[60%] ${m.role === 'user' ? 'bg-amber-500 text-white ml-auto' : 'bg-gray-100 mr-auto'}`} key={m.id}>
+                        { m.parts.map((part, i) => {
+                            if(part.type !== 'text') return null
+                            const text = part.text.trim()
+                            if(!text) return null
+
+                            return (
+                                <p className='text-xl' key={i}>
+                                    <strong>{ m.role === 'user' ? name : 'CashTrackr IA' }:</strong>{ ' ' }
+                                    { text }
+                                </p>
+                            )
+                        }) }
+                    </div>
+                )) }
+            </div>
             
             <form onSubmit={(e) => eventSubmit(e) } className="flex flex-col gap-2">
                 <textarea
