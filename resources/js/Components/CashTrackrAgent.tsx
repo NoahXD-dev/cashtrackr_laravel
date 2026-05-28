@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
 
 type Props = {
     budgetId: number
@@ -8,14 +9,28 @@ type Props = {
 export default function CashTrackrAgent({ budgetId }: Props) {
 
     const [input, setInput] = useState('');
-    const {} = useChat({})
+    const { sendMessage, messages } = useChat({
+        transport: new DefaultChatTransport({
+            api: `/dashboard/budgets/${ budgetId }/chat`
+        })
+    })
+
+    console.log(messages)
+
+    const eventSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        if(input.trim()) {
+            sendMessage({ text: input })
+            setInput('')
+        }
+    }
 
     return (
         <section className='p-10 lg:px-5 shadow-lg mt-10'>
             <h2 className="text-3xl font-bold">Pregunta sobre tu Presupuesto, añade gastos y más.</h2>
             <div className="space-y-3 mb-4 mt-8"></div>
             
-            <form onSubmit={() => {} } className="flex flex-col gap-2">
+            <form onSubmit={(e) => eventSubmit(e) } className="flex flex-col gap-2">
                 <textarea
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
