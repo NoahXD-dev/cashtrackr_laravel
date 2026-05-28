@@ -70,7 +70,9 @@ it('creates a budget and redirects with success message', function() {
         'type' => 'goal'
     ]);
 
-    $response->assertRedirect(route('dashboard'));
+    $budget = Budget::first();
+
+    $response->assertRedirect(route('budgets.show', $budget));
     $response->assertSessionHas('success','!Presupuesto creado correctamente!');
 });
 
