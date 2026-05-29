@@ -71,10 +71,18 @@ declare module 'ziggy-js' {
     "expenses.destroy": [
         {
             "name": "budget",
-            "required": true
+            "required": true,
+            "binding": "id"
         },
         {
             "name": "expense",
+            "required": true,
+            "binding": "id"
+        }
+    ],
+    "budgets.chat": [
+        {
+            "name": "budget",
             "required": true,
             "binding": "id"
         }
