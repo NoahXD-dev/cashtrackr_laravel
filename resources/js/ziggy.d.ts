@@ -87,6 +87,13 @@ declare module 'ziggy-js' {
             "binding": "id"
         }
     ],
+    "budgets.scan-ticket": [
+        {
+            "name": "budget",
+            "required": true,
+            "binding": "id"
+        }
+    ],
     "storage.local": [
         {
             "name": "path",

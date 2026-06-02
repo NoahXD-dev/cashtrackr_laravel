@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { toast } from 'react-toastify';
@@ -10,9 +10,10 @@ type Props = {
 }
 
 export default function CashTrackrAgent({ budgetId, name }: Props) {
-
     const [input, setInput] = useState('');
-    const { sendMessage, messages } = useChat({
+    const fileInputRef = useRef<HTMLInputElement>(null)
+
+    const { sendMessage, messages, setMessages } = useChat({
         transport: new DefaultChatTransport({
             api: `/dashboard/budgets/${ budgetId }/chat`
         }),
@@ -32,6 +33,76 @@ export default function CashTrackrAgent({ budgetId, name }: Props) {
             }
         }
     })
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if(!file) return
+
+        setMessages(prev => [
+            ...prev,
+            {
+                id: crypto.randomUUID(),
+                role: 'user' as const,
+                content: 'Ticket de compra subido',
+                parts: [{
+                    type: 'text' as const,
+                    text: 'Ticket de compra subido'
+                }]
+            }
+        ])
+
+        try {
+            const csftToken = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? ''
+            const formData = new FormData()
+            formData.append('image', file)
+
+            const response = await fetch(`/dashboard/budgets/${budgetId}/scan-ticket`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csftToken,
+                    'Accept': 'aplicacion/json'
+                },
+                credentials: 'same-origin',
+                body: formData
+            })
+
+            const data = await response.json()
+
+            setMessages(prev => [
+                ...prev,
+                {
+                    id: crypto.randomUUID(),
+                    role: 'assistant' as const,
+                    content: data.message,
+                    parts: [{
+                        type: 'text' as const,
+                        text: data.message
+                    }]
+                }
+            ])
+
+            if(data.success) {
+                toast.success('Gastos del ticket registrados')
+                router.reload()
+            }
+        } catch (error) {
+            console.error('Error al procesar el Ticket', error)
+            setMessages(prev => [
+                ...prev,
+                {
+                    id: crypto.randomUUID(),
+                    role: 'assistant' as const,
+                    content: 'Error al procesar el ticket. Intenta de nuevo',
+                    parts: [{
+                        type: 'text' as const,
+                        text: 'Error al procesar el ticket. Intenta de nuevo'
+                    }]
+                }
+            ])
+        } finally {
+            if(fileInputRef.current) fileInputRef.current.value = ''
+        }
+    }
 
     const eventSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -79,7 +150,7 @@ export default function CashTrackrAgent({ budgetId, name }: Props) {
                     </button>
                     <button
                         type="button"
-                        onClick={() => {} }
+                        onClick={() => fileInputRef.current?.click() }
                         className="mt-5 bg-amber-500 hover:bg-amber-500 p-3 rounded-lg text-white font-bold text-xl cursor-pointer disabled:opacity-20"
                     >
                         Subir Ticket
@@ -89,6 +160,8 @@ export default function CashTrackrAgent({ budgetId, name }: Props) {
                     type="file"
                     accept="image/*"
                     className="hidden"
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
                 />
             </form>
         </section>
