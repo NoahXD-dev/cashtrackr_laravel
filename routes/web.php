@@ -10,6 +10,7 @@ use App\Http\Controllers\TicketScanController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Inertia\Inertia;
 
 Route::get('/', function () {
     return view('welcome');
@@ -56,4 +57,30 @@ Route::prefix('dashboard')->group(function () {
 
     Route::post('/budgets/{budget}/chat', [BudgetChatController::class,'store'])->name('budgets.chat');
     Route::post('/budgets/{budget}/scan-ticket', [TicketScanController::class,'store'])->name('budgets.scan-ticket');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/subscription-chechout/{plan}', function(Request $request, String $plan) {
+        $prices = [
+            'monthly' => config('services.stripe.price_ai_montly'),
+            'yearly' => config('services.stripe.price_ai_yearly')
+        ];
+
+        abort_unless(isset($prices[$plan]), 404, 'Plan no válido');
+
+        $checkout = $request->user()
+            ->newSubscription('default', $prices[$plan])
+            ->checkout([
+                'success_url' => route('billing.success'),
+                'cancel_url' => route('billing.cancel'),
+
+            ]);
+        
+        return Inertia::location($checkout->url);
+    })->name('subscription.checkout')->whereIn('plan', ['monthly', 'yearly']);
+
+    Route::prefix('billing')->group(function() {
+        Route::view('success', 'billing.success')->name('billing.success');
+        Route::view('cancel', 'billing.cancel')->name('billing.cancel');
+    });
 });
