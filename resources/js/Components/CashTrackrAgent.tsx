@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
+import { toast } from 'react-toastify';
+import { router } from '@inertiajs/react';
 
 type Props = {
     budgetId: number,
@@ -13,7 +15,22 @@ export default function CashTrackrAgent({ budgetId, name }: Props) {
     const { sendMessage, messages } = useChat({
         transport: new DefaultChatTransport({
             api: `/dashboard/budgets/${ budgetId }/chat`
-        })
+        }),
+        onFinish: ({ message }) => {
+            const expenseCreated = message.parts.some(part => {
+                // if(!part.output) return null
+                // return part.output.startsWith('[EXPENSE_CREATED]')
+
+                const isAddExpense = part.type === 'tool-AddExpense'
+                const finished = 'state' in part && part.state === 'output-available'
+                return isAddExpense && finished
+            })
+
+            if(expenseCreated) {
+                toast.success('Gasto registrado correctamente')
+                router.reload({ only: ['expenses', 'budget'] })
+            }
+        }
     })
 
     const eventSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -32,7 +49,7 @@ export default function CashTrackrAgent({ budgetId, name }: Props) {
                     <div className={`p-3 rounded-lg max-w-[80%] lg:max-w-[60%] ${m.role === 'user' ? 'bg-amber-500 text-white ml-auto' : 'bg-gray-100 mr-auto'}`} key={m.id}>
                         { m.parts.map((part, i) => {
                             if(part.type !== 'text') return null
-                            const text = part.text.trim()
+                            const text = part.text.replace('[EXPENSE_CREATED]', '').trim()
                             if(!text) return null
 
                             return (
