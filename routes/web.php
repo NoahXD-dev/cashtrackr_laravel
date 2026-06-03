@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\SubscriptionCheckoutController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TicketScanController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -70,4 +71,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::get('/plans', fn() => Inertia::render('Pro/Plans'))->name('plans');
+});
+
+Route::prefix('subscription')->group(function() {
+    Route::get('/', [SubscriptionController::class, 'show'])->name('subscription.manage');
+    Route::post('/swap/{plan}', [SubscriptionController::class, 'swap'])->name('subscription.swap')
+        ->whereIn('plan', ['monthly', 'yearly']);
+    Route::post('/cancel', [SubscriptionController::class, 'cancel'])->name('subscription.cancel');
+    Route::post('/resume', [SubscriptionController::class, 'resume'])->name('subscription.resume');
 });
