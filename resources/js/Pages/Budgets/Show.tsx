@@ -27,6 +27,8 @@ export default function Show({ budget, categories, spent }: Props) {
         }
     }, [flash])
 
+    console.log(user)
+
     const openCreateModal = useExpenseModalStore((state => state.openCreateModal))
 
     const remaining = +budget.amount - +spent
