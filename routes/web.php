@@ -6,9 +6,13 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\SubscriptionCheckoutController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\TicketScanController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Inertia\Inertia;
 
 Route::get('/', function () {
     return view('welcome');
@@ -54,4 +58,25 @@ Route::prefix('dashboard')->group(function () {
     Route::delete('/budgets/{budget}/expenses/${expense}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
 
     Route::post('/budgets/{budget}/chat', [BudgetChatController::class,'store'])->name('budgets.chat');
+    Route::post('/budgets/{budget}/scan-ticket', [TicketScanController::class,'store'])->name('budgets.scan-ticket');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/subscription-chechout/{plan}', [SubscriptionCheckoutController::class, 'store'])->name('subscription.checkout')
+        ->whereIn('plan', ['monthly', 'yearly']);
+
+    Route::prefix('billing')->group(function() {
+        Route::view('success', 'billing.success')->name('billing.success');
+        Route::view('cancel', 'billing.cancel')->name('billing.cancel');
+    });
+
+    Route::get('/plans', fn() => Inertia::render('Pro/Plans'))->name('plans');
+});
+
+Route::prefix('subscription')->group(function() {
+    Route::get('/', [SubscriptionController::class, 'show'])->name('subscription.manage');
+    Route::post('/swap/{plan}', [SubscriptionController::class, 'swap'])->name('subscription.swap')
+        ->whereIn('plan', ['monthly', 'yearly']);
+    Route::post('/cancel', [SubscriptionController::class, 'cancel'])->name('subscription.cancel');
+    Route::post('/resume', [SubscriptionController::class, 'resume'])->name('subscription.resume');
 });

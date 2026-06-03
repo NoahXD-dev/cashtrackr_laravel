@@ -2,6 +2,7 @@
 
 namespace App\Ai\Agents;
 
+use App\Ai\Tools\AddExpense;
 use App\Ai\Tools\SearchExpenses;
 use Laravel\Ai\Contracts\Agent;
 use Laravel\Ai\Contracts\HasTools;
@@ -57,6 +58,7 @@ class BudgetAssistant implements Agent, HasTools
     {
         return [
             new SearchExpenses($this->budgetId),
+            new AddExpense($this->budgetId, $this->hasCategories)
         ];
     }
 }
