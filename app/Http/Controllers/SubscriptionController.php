@@ -26,7 +26,10 @@ class SubscriptionController extends Controller
             'subscription' => [
                 'plan' => $currentPlan,
                 'price' => $currentPlan === 'yearly' ? 499.99 : 49.99,
-                'status_label' => $this->buildStatusLabel($subscription, $nextBillingDate)
+                'status_label' => $this->buildStatusLabel($subscription, $nextBillingDate),
+                'on_grace_period' => $subscription->onGracePeriod(),
+                'next_billing_date' => $nextBillingDate,
+                'ends_at' => $subscription->ends_at?->toIso8601String()
             ]
         ]);
     }
