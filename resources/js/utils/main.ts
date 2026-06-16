@@ -1,4 +1,6 @@
-export function formatDate(date: string) {
+export function formatDate(date: string | null) {
+    if(!date) return
+
     return new Intl.DateTimeFormat('es-MX', {
         day: "numeric",
         month: 'long',
